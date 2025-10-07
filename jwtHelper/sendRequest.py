@@ -43,7 +43,7 @@ class sendRequest:
 
         resp = requests.get(f"https://{host}/", headers=headers, cookies=cookies)
 
-        return resp.status_code
+        return resp
     
 
 send_request = sendRequest()
