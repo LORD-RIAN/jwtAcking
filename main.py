@@ -22,8 +22,8 @@ alg = jwt_reader.get_jwt_alg(jwt)
 testrun = hs_brute_force.brute_force_secret(jwt, wordlist)
 print(testrun)
 
-
-host = "example.com"
+path = "example.com/test"
+host = path.split("/")[0]
 
 headers = {
     "Host": f"{host}",
