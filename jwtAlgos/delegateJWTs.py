@@ -1,5 +1,7 @@
 ## Delegate the JWT + Request to the script handling the JWT algo
 from jwtAlgos.HS_algos import hs_algos
+from jwtAlgos.ALL_algos import generic_algos
+from jwtHelper.jwtSplitter import jwt_reader
 import os
 from dotenv import load_dotenv
 
@@ -13,13 +15,43 @@ class jwtDelegater:
     def __init__(self):
         pass
 
+    def run_attacks(self, request_data):
+        results = {}
 
-    def hs_algo(self, jwts, request_data):
-        print(jwts)
-        for jwt in jwts:
-            print("s")
+        if request_data.get("jwts"):
+            for i, jwt in enumerate(request_data.get("jwts"), start=1):
+                result = self.run_attack(jwt=jwt, request_data=request_data)
+
+                results[str(i)] = result
+
+                            
             
-            jwt_secret = hs_algos.brute_force_secret(jwt, secret_list=wordlist)
+        return results
+    
+    def run_attack(self, jwt, request_data):
+
+        result = {}
+        alg = jwt_reader.get_jwt_alg(jwt)
+
+        if alg.upper().startswith("HS"):
+            jwt_secret = self.hs_algo(jwt=jwt, request_data=request_data)
+    
+        failed_to_read_secret = generic_algos.fail_to_read_secret(request_data=request_data, jwt=jwt)
+
+
+        result = {
+            "url": request_data.get("url"),
+            "method": request_data.get("method"),
+            "jwt_secret": jwt_secret,
+            "fail_to_read_jwt_secret": failed_to_read_secret.get("fail_to_read_jwt_secret")
+        }
+
+        return result
+
+
+    def hs_algo(self, jwt, request_data):
+            
+        jwt_secret = hs_algos.brute_force_secret(jwt, secret_list=wordlist)
         
         return jwt_secret
     

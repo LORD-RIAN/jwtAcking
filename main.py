@@ -23,16 +23,18 @@ print("---")
 print(request_data.get("url"))
 print(request_data.get("method"))
 
-print("start")
-jwt_secret = jwt_delegater.hs_algo(request_data.get("jwts"), request_data=request_data)
+print("\n\n\n\nstart")
 
 
-print(jwt_secret)
+results = jwt_delegater.run_attacks(request_data=request_data)
+
+print(results)
 
 """
 
 Add module to remove all unused auth. So all JWTs that could be removed while still returning 200 gets removed <-
 
 """
+
 
 print("Done!")
