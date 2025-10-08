@@ -17,12 +17,19 @@ class jwtReader:
 
         return header, body
     
+    def _b64url_decode(self, segment):
+        segment += "=" * (-len(segment) % 4)
+
+        return base64.urlsafe_b64decode(segment)
 
     def get_jwt_alg(self, jwt):
+
         header, _ = self.split_jwt(jwt)
-        header = json.loads(base64.b64decode(header).decode())
+
+        header = json.loads(self._b64url_decode(header))
 
         alg = header.get("alg").upper()
+
 
         return alg
 

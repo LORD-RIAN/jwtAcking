@@ -17,10 +17,13 @@ class jwtDelegater:
 
     def run_attacks(self, request_data):
         results = {}
+        print("start: run_attacks")
 
         if request_data.get("jwts"):
             for i, jwt in enumerate(request_data.get("jwts"), start=1):
+                
                 result = self.run_attack(jwt=jwt, request_data=request_data)
+                
 
                 results[str(i)] = result
 
@@ -31,20 +34,23 @@ class jwtDelegater:
     def run_attack(self, jwt, request_data):
 
         result = {}
-        alg = jwt_reader.get_jwt_alg(jwt)
 
+        alg = jwt_reader.get_jwt_alg(jwt=jwt)
+
+        jwt_secret = None
         if alg.upper().startswith("HS"):
             jwt_secret = self.hs_algo(jwt=jwt, request_data=request_data)
-    
-        failed_to_read_secret = generic_algos.fail_to_read_secret(request_data=request_data, jwt=jwt)
 
+        failed_to_read_secret = generic_algos.fail_to_read_secret(request_data=request_data, jwt=jwt)
 
         result = {
             "url": request_data.get("url"),
             "method": request_data.get("method"),
             "jwt_secret": jwt_secret,
-            "fail_to_read_jwt_secret": failed_to_read_secret.get("fail_to_read_jwt_secret")
+            "fail_to_read_jwt_secret": failed_to_read_secret.get("fail_to_read_jwt_secret"),
+            "alg": alg
         }
+
 
         return result
 

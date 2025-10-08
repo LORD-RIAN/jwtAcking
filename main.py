@@ -1,11 +1,7 @@
 ## jwt hacking main, tests all JWT hacking activities
 
-from jwtAlgos.HS_algos import hs_algos
-from jwtHelper.jwtSplitter import jwt_reader
-from jwtHelper.sendRequest import send_request
 from jwtHelper.interpretCurl import curl_interpreter
 from jwtAlgos.delegateJWTs import jwt_delegater
-import requests
 import sys
 
 
@@ -15,20 +11,18 @@ print("1")
 
 request_data = curl_interpreter.convert_data(data=data)
 
-print("x")
+print("Initial Data From Curl: \n")
 print(request_data.get("jwts"))
 print(request_data.get("headers"))
 print(request_data.get("cookies"))
-print("---")
 print(request_data.get("url"))
 print(request_data.get("method"))
 
-print("\n\n\n\nstart")
+print("\nStart!\n\n\n\n")
 
 
 results = jwt_delegater.run_attacks(request_data=request_data)
 
-print(results)
 
 """
 
@@ -36,5 +30,5 @@ Add module to remove all unused auth. So all JWTs that could be removed while st
 
 """
 
-
+print(f"\n\nResults: {results}")
 print("Done!")
