@@ -30,5 +30,10 @@ Add module to remove all unused auth. So all JWTs that could be removed while st
 
 """
 
+"""
+Note to self, if fail to verify secret -  Algorithm confusion is useless ( still run it ??? ) 
+
+"""
+
 print(f"\n\nResults: {results}")
 print("Done!")
