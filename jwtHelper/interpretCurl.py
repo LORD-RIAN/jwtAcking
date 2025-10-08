@@ -8,8 +8,31 @@ class curlInterpreter:
     def __init__(self):
         pass
 
+    def convert_data(self, data):
+        lines = data.split("\n")
+        request_data = {}
 
-    def headers_from_curl(self, curl_request: str):
+        headers = self.headers_from_curl(lines)
+
+        headers_dict = self.headers_to_dict(headers=headers)
+        cookies_dict = self.extract_cookies(headers=headers)
+        jwts = self.find_jwt(headers=headers)
+
+        method = self.extract_method(curl_request=data)
+        url = self.extract_url(curl_request=data)
+
+        request_data = {
+            "url": url,
+            "method": method,
+            "headers": headers_dict,
+            "cookies": cookies_dict,
+            "jwts": jwts
+        }
+
+        return request_data
+
+
+    def headers_from_curl(self, curl_request):
 
         headers = []
         for line in curl_request:
@@ -31,7 +54,7 @@ class curlInterpreter:
     
     def find_jwt(self, headers):
         jwts = []
-        pattern = re.compile(r'[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+')
+        pattern = re.compile(r'(?<![\w-])(?:[A-Za-z0-9_-]{10,}\.){2}[A-Za-z0-9_-]{10,}(?![\w-])')
 
         for header in headers:
             match = pattern.search(header)
@@ -59,35 +82,25 @@ class curlInterpreter:
                         cookies[key] = value
         return cookies
     
+    def extract_url(self, curl_request: str):
+        match = re.search(r"curl\s+'([^']+)'", curl_request)
+        if not match:
+            match = re.search(r'curl\s+"([^"]+)"', curl_request)
+        return match.group(1) if match else None
+    
+    def extract_method(self, curl_request: str):
+
+        for line in curl_request.splitlines():
+            if "-X" in line or "--request" in line:
+                parts = line.strip().split()
+                for p in parts:
+                    if p.upper() in ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"]:
+                        return p.upper()
+
+        return "GET"
+
+    
 
 
 curl_interpreter = curlInterpreter()
 
-if __name__ == "__main__":
-
-    p = argparse.ArgumentParser()
-
-    p.add_argument("-curl", "--curl", help="full curl command", required=True)
-
-    args = p.parse_args()
-
-    curl_request = """curl 'https://example.com/' \
-  -H 'accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7' \
-  -H 'accept-language: en-US,en;q=0.9' \
-  -H 'cache-control: max-age=0' \
-  -H 'if-modified-since: Mon, 13 Jan 2025 20:11:20 GMT' \
-  -H 'if-none-match: "84238dfc8092e5d9c0dac8ef93371a07:1736799080.121134"' \
-  -H 'priority: u=0, i' \
-  -H 'sec-ch-ua: "Google Chrome";v="141", "Not?A_Brand";v="8", "Chromium";v="141"' \
-  -H 'sec-ch-ua-mobile: ?0' \
-  -H 'sec-ch-ua-platform: "Windows"' \
-  -H 'sec-fetch-dest: document' \
-  -H 'sec-fetch-mode: navigate' \
-  -H 'sec-fetch-site: none' \
-  -H 'sec-fetch-user: ?1' \
-  -H 'upgrade-insecure-requests: 1' \
-  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36'"""
-    
-    curl_request = args.curl
-    
-    print(curl_request)

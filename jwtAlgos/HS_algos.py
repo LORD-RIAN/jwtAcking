@@ -4,7 +4,7 @@ import hashlib
 import base64
 from jwtHelper.jwtSplitter import jwt_reader
 
-class hsBruteForce:
+class hsAlgos:
     def __init__(self):
         pass
 
@@ -28,11 +28,14 @@ class hsBruteForce:
         return jwt_secret
     
     def brute_force_secret(self, jwt, secret_list):
+        
         jwt_secret = jwt.split(".")[2]
+        
 
         alg = jwt_reader.get_jwt_alg(jwt=jwt)
 
         for secret in secret_list:
+            
             jwt_test_secret = self.hash_secret(alg=alg, jwt=jwt, secret=secret)
 
             if jwt_test_secret == jwt_secret:
@@ -41,10 +44,10 @@ class hsBruteForce:
         return None
     
 
-hs_brute_force = hsBruteForce()
+hs_algos = hsAlgos()
 
 if __name__ == "__main__":
     jwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.ZDcyqtoxXmPegYh_8rA9r4F95LRNJGGhI5RpHmUsJjo"
-    jwt_nosecret = hs_brute_force.hash_secret("Hs256", jwt)
+    jwt_nosecret = hs_algos.hash_secret("Hs256", jwt)
 
     print(jwt_nosecret)

