@@ -1,0 +1,12 @@
+[package]
+name = "watchdog-jwt"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1"
+base64 = { version = "0.22", default-features = false, features = ["alloc"] }
+memmap2 = "0.9"
+rayon = "1.10"
+ring = "0.17"
+clap = { version = "4", features = ["derive"] }

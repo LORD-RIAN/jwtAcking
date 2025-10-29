@@ -1,3 +1,56 @@
 __pycache__/
 *.env
 scraped-JWT-secrets.txt
+
+# === Rust build artifacts ===
+*/target/
+*/Cargo.lock
+**/*.rs.bk
+*.bak
+
+*/.cargo/config.toml.bak
+**/.cargo/*.bak
+
+
+# === Cargo specific ===
+# Ignore Cargo.lock for libraries (keep for apps)
+/Cargo.lock
+
+# === Build / test / debug ===
+/debug/
+/release/
+/benchmarks/
+/examples/target/
+/tests/target/
+
+# === IDE / editor cruft ===
+# VSCode
+.vscode/
+
+# JetBrains (CLion, IntelliJ Rust)
+.idea/
+
+# macOS & Linux desktop garbage
+.DS_Store
+Thumbs.db
+
+# === Temporary / OS files ===
+*.log
+*.tmp
+*.swp
+*.swo
+
+# === Optional: if using Maturin or PyO3 (Python bindings) ===
+/*.so
+/*.pyd
+/*.dll
+/*.pyc
+/venv/
+
+# === Optional: if you compile for WebAssembly ===
+/pkg/
+/wasm-pack.log
+
+# === Optional: if you use coverage tools ===
+/coverage/
+/*.profraw
