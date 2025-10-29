@@ -1,1 +1,0 @@
-/mnt/c/Users/julia/Desktop/JWTcracker/fastCracker/target/release/watchdog-jwt: /mnt/c/Users/julia/Desktop/JWTcracker/fastCracker/src/encryption.rs /mnt/c/Users/julia/Desktop/JWTcracker/fastCracker/src/input_file.rs /mnt/c/Users/julia/Desktop/JWTcracker/fastCracker/src/main.rs
